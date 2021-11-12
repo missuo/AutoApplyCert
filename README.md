@@ -9,9 +9,9 @@ Use acme.sh to apply SSL certificate automatically
 - Update certificate
 
 ## Usage
-1. Resolve your domain name to your server IP
-2. Ping your domain name and check if the resolution is normal.
-3. Use the following command.
+- Resolve your domain name to your server IP
+- Ping your domain name and check if the resolution is normal.
+- Use the following command.
 ~~~shell
 wget -O apply.sh https://cdn.jsdelivr.net/gh/missuo/AutoApplyCert/apply.sh && bash apply.sh
 ~~~
