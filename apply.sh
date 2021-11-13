@@ -4,7 +4,7 @@ export PATH
 
 #================================================================
 #	System Required: CentOS 6/7/8,Debian 8/9/10,Ubuntu 16/18/20
-#	Description: Easy SSL Apply Script
+#	Description: Use acme.sh to apply SSL certificate automatically
 #	Version: 1.0
 #	Author: Vincent Young
 # 	Telegram: https://t.me/missuo
