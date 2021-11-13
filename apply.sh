@@ -5,11 +5,11 @@ export PATH
 #================================================================
 #	System Required: CentOS 6/7/8,Debian 8/9/10,Ubuntu 16/18/20
 #	Description: Use acme.sh to apply SSL certificate automatically
-#	Version: 1.0
+#	Version: 1.1
 #	Author: Vincent Young
 # 	Telegram: https://t.me/missuo
 #	Github: https://github.com/missuo/AutoApplyCert
-#	Latest Update: Nov 12, 2021
+#	Latest Update: Nov 13, 2021
 #=================================================================
 
 # 定义一些颜色
@@ -56,7 +56,6 @@ check_sys(){
 		exit 1
 	fi
 }
-check_sys
 
 # 安装acme.sh
 installAcme(){
@@ -64,10 +63,11 @@ installAcme(){
     ~/.acme.sh/acme.sh --upgrade --auto-upgrade
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 }
-installAcme
 
 # 申请证书
 applySSL(){
+	check_sys
+	installAcme
 	read -p "请输入你的域名:" domain
 	[ -z "${domain}" ]
 	echo ""
@@ -76,4 +76,55 @@ applySSL(){
     chown -R nobody:nogroup /etc/ssl/private/
     echo "你的证书被存放在/etc/ssl/private/目录下"
 }
-applySSL
+
+update(){
+	read -p "请输入你的域名:" domain
+	[ -z "${domain}" ]
+	echo ""
+	~/.acme.sh/acme.sh --renew -d ${domain} --ecc --force --fullchain-file /etc/ssl/private/fullchain.pem --key-file /etc/ssl/private/privkey.pem
+    chown -R nobody:nogroup /etc/ssl/private/
+    echo "你的证书已更新完并且被存放在/etc/ssl/private/目录下"
+}
+
+cancelrenew(){
+	read -p "请输入你的域名:" domain
+	[ -z "${domain}" ]
+	echo ""
+	~/.acme.sh/acme.sh --cancel-auto-renew -d ${domain}
+	echo "你的证书已取消续签"
+}
+
+start_menu(){
+		clear
+		echo && echo -e "自动申请SSL证书 Made by missuo
+更新内容及反馈： https://github.com/missuo/AutoApplyCert
+————————————模式选择————————————
+${green}1.${plain} 申请证书
+${green}2.${plain} 手动更新证书
+${green}3.${plain} 取消自动续期
+${green}0.${plain} 退出脚本
+————————————————————————————————"
+	read -p "请输入数字: " num
+	case "$num" in
+	1)
+		applySSL
+		;;
+	2)
+		update
+		;;
+	3)
+		cancelrenew
+		;;
+	0)
+		exit 1
+		;;
+	*)
+		clear
+		echo -e "[${red}错误${plain}]:请输入正确数字[0-3]"
+		sleep 5s
+		start_menu
+		;;
+	esac
+}
+start_menu 
+
