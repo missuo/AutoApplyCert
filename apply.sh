@@ -8,7 +8,7 @@ export PATH
 #	Version: 1.0
 #	Author: Vincent Young
 # 	Telegram: https://t.me/missuo
-#	Github: https://github.com/missuo/acme
+#	Github: https://github.com/missuo/AutoApplyCert
 #	Latest Update: Nov 12, 2021
 #=================================================================
 
