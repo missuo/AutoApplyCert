@@ -13,5 +13,5 @@ Use acme.sh to apply SSL certificate automatically
 - Ping your domain name and check if the resolution is normal.
 - Use the following command.
 ~~~shell
-wget -O apply.sh https://cdn.jsdelivr.net/gh/missuo/AutoApplyCert/apply.sh && bash apply.sh
+bash <(curl -Ls https://cdn.jsdelivr.net/gh/missuo/AutoApplyCert/apply.sh)
 ~~~
