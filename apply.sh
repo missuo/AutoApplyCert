@@ -12,19 +12,19 @@ export PATH
 #	Latest Update: Nov 13, 2021
 #=================================================================
 
-# 定义一些颜色
+# Define some colors
 red='\033[0;31m'
 green='\033[0;32m'
 yellow='\033[0;33m'
 plain='\033[0m'
 
-# 保证在ROOT下运行
-[[ $EUID -ne 0 ]] && echo -e "[${red}错误${plain}]请以ROOT运行本脚本！" && exit 1
+# Guaranteed to run under ROOT
+[[ $EUID -ne 0 ]] && echo -e "[${red}Error${plain}]: Please run this script with ROOT!" && exit 1
 
 check_sys(){
-	echo "现在开始检查你的系统是否支持"
+	echo "Now start checking if your system supports"
 	
-	# 判断是什么Linux系统
+	# Determine what Linux system it is
 	if [[ -f /etc/redhat-release ]]; then
 		release="Centos"
 	elif cat /etc/issue | grep -q -E -i "debian"; then
@@ -41,7 +41,7 @@ check_sys(){
 		release="Centos"
 	fi
 	
-	# 根据系统安装依赖
+	# Depending on the system installation dependencies
 	if [ $release = "Centos" ]
 	then
 		yum -y install curl wget socat
@@ -52,59 +52,59 @@ check_sys(){
 	then
 		apt update -y && apt install -y curl wget socat
 	else
-		echo -e "[${red}错误${plain}]不支持当前系统"
+		echo -e "[${red}Error${plain}]: Current system not supported!"
 		exit 1
 	fi
 }
 
-# 安装acme.sh
+# Install acme.sh
 installAcme(){
     curl https://get.acme.sh | sh
     ~/.acme.sh/acme.sh --upgrade --auto-upgrade
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 }
 
-# 申请证书
+# Apply SSL certificate
 applySSL(){
 	check_sys
 	installAcme
-	read -p "请输入你的域名:" domain
+	read -p "Please enter your domain name: " domain
 	[ -z "${domain}" ]
 	echo ""
     ~/.acme.sh/acme.sh --issue -d ${domain} --standalone --keylength ec-256
     ~/.acme.sh/acme.sh --install-cert -d ${domain} --ecc --fullchain-file /etc/ssl/private/fullchain.pem --key-file /etc/ssl/private/privkey.pem
     chown -R nobody:nogroup /etc/ssl/private/
-    echo "你的证书被存放在/etc/ssl/private/目录下"
+    echo "Your certificate is stored in the /etc/ssl/private/ directory"
 }
 
 update(){
-	read -p "请输入你的域名:" domain
+	read -p "Please enter your domain name: " domain
 	[ -z "${domain}" ]
 	echo ""
 	~/.acme.sh/acme.sh --renew -d ${domain} --ecc --force --fullchain-file /etc/ssl/private/fullchain.pem --key-file /etc/ssl/private/privkey.pem
     chown -R nobody:nogroup /etc/ssl/private/
-    echo "你的证书已更新完并且被存放在/etc/ssl/private/目录下"
+    echo "Your certificate has been renewed and is stored in the /etc/ssl/private/ directory"
 }
 
 cancelrenew(){
-	read -p "请输入你的域名:" domain
+	read -p "Please enter your domain name: " domain
 	[ -z "${domain}" ]
 	echo ""
 	~/.acme.sh/acme.sh --cancel-auto-renew -d ${domain}
-	echo "你的证书已取消续签"
+	echo "Your certificate has been cancelled for renewal"
 }
 
 start_menu(){
 		clear
-		echo && echo -e "自动申请SSL证书 Made by missuo
-更新内容及反馈： https://github.com/missuo/AutoApplyCert
-————————————模式选择————————————
-${green}1.${plain} 申请证书
-${green}2.${plain} 手动更新证书
-${green}3.${plain} 取消自动续期
-${green}0.${plain} 退出脚本
+		echo && echo -e "Automatic SSL Certificate Application Made by missuo
+Updates and Feedback: https://github.com/missuo/AutoApplyCert
+————————————Mode————————————————
+${green}1.${plain} Apply for a certificate
+${green}2.${plain} Manual certificate renewal
+${green}3.${plain} Cancel automatic renewal
+${green}0.${plain} Exit
 ————————————————————————————————"
-	read -p "请输入数字: " num
+	read -p "Please enter the number: " num
 	case "$num" in
 	1)
 		applySSL
@@ -120,8 +120,8 @@ ${green}0.${plain} 退出脚本
 		;;
 	*)
 		clear
-		echo -e "[${red}错误${plain}]:请输入正确数字[0-3]"
-		sleep 5s
+		echo -e "[${red}Error${plain}]:Please enter the correct number[0-3]"
+		sleep 3s
 		start_menu
 		;;
 	esac
